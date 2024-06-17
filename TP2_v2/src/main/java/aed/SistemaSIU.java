@@ -20,6 +20,7 @@ public class SistemaSIU {
        
     
        for(int i= 0;i < infoMaterias.length; i += 1){
+            Materia nuevaMateria = new Materia();
             ParCarreraMateria[] nombres = (infoMaterias[i].getParesCarreraMateria());
             for (int j= 0;j < nombres.length; j += 1){
                 String nombreCarrera = nombres[j].carrera;
@@ -27,12 +28,10 @@ public class SistemaSIU {
                 Carrera actual = this._carreras.obtener(nombreCarrera);
                 if (actual == null){
                     Carrera nuevaCarrera = new Carrera();
-                    Materia nuevaMateria = new Materia();
                     this._carreras.agregar(nombreCarrera,nuevaCarrera);
                     nuevaCarrera.crearMateria(nombreMateria,nuevaMateria);
                 }else{
-                    Materia NuevaMateria = new Materia();
-                    actual.crearMateria(nombreMateria, NuevaMateria);
+                    actual.crearMateria(nombreMateria, nuevaMateria);
                     this._carreras.agregar(nombreMateria, actual);
                 }
             }
@@ -54,11 +53,26 @@ public class SistemaSIU {
     }
 
     public void agregarDocente(CargoDocente cargo, String carrera, String materia){
-        throw new UnsupportedOperationException("Método no implementado aún");	    
+        Carrera carreraActual = this._carreras.obtener(carrera);
+        Materia materiaActual = carreraActual.obtenerMateria(materia);
+       if (cargo == CargoDocente.PROF){
+        materiaActual.agregarProfesor();
+       }
+       else if (cargo == CargoDocente.JTP){
+        materiaActual.agregarJtp();
+       }
+       else if (cargo == CargoDocente.AY1){
+        materiaActual.agregarAy1();
+       }
+       else if (cargo == CargoDocente.AY2){
+        materiaActual.agregarAy2();
+       }
     }
 
     public int[] plantelDocente(String materia, String carrera){
-        throw new UnsupportedOperationException("Método no implementado aún");	    
+        Carrera carreraActual = this._carreras.obtener(carrera);
+        Materia materiaActual = carreraActual.obtenerMateria(materia);
+        return materiaActual.obtenerDocentes();
     }
 
     public void cerrarMateria(String materia, String carrera){
@@ -66,11 +80,15 @@ public class SistemaSIU {
     }
 
     public int inscriptos(String materia, String carrera){
-        throw new UnsupportedOperationException("Método no implementado aún");	    
-    }
+        Carrera carreraActual = this._carreras.obtener(carrera);
+        Materia materiaActual = carreraActual.obtenerMateria(materia);
+        return materiaActual.cantidadAlumnos();
+        }
 
     public boolean excedeCupo(String materia, String carrera){
-        throw new UnsupportedOperationException("Método no implementado aún");	    
+        Carrera carreraActual = this._carreras.obtener(carrera);
+        Materia materiaActual = carreraActual.obtenerMateria(materia);
+        return materiaActual.excedeCupo();
     }
 
     public String[] carreras(){
@@ -82,6 +100,7 @@ public class SistemaSIU {
     }
 
     public int materiasInscriptas(String estudiante){
-        throw new UnsupportedOperationException("Método no implementado aún");	    
+        Alumno alumnoActual = this._alumnos.obtener(estudiante);
+        return alumnoActual.cantidadMaterias();
     }
 }

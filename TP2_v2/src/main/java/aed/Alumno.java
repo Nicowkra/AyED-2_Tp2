@@ -14,7 +14,7 @@ public void dejarMateria(){
 public void agregarMateria(){
     this._cantidadMaterias += 1;
 }
-public int obtenerCantidadMaterias(){
+public int cantidadMaterias(){
     return this._cantidadMaterias;
 }
 
