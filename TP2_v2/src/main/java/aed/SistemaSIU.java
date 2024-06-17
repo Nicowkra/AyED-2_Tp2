@@ -32,7 +32,6 @@ public class SistemaSIU {
                     nuevaCarrera.crearMateria(nombreMateria,nuevaMateria);
                 }else{
                     actual.crearMateria(nombreMateria, nuevaMateria);
-                    this._carreras.agregar(nombreMateria, actual);
                 }
             }
        }
