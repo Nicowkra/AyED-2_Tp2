@@ -4,19 +4,24 @@ import java.util.*;
 
 public class ListaEnlazada<T> implements Secuencia<T> {
     private Nodo primero;
+    private Nodo ultimo;
+    private int _longitud;
 
     private class Nodo {
         T valor;
         Nodo sig;
         Nodo ant;
-
         Nodo(T v) {valor = v;}
-
     }
 
+    //O(1)
     public ListaEnlazada() {
-        primero = null;
+        this.primero = null;
+        this.ultimo = null;
+        this._longitud = 0;
     }
+    
+    //O(n)
     public ListaEnlazada(ListaEnlazada<T> lista) {
         int i = 0;
         while (i<lista.longitud()) {
@@ -26,89 +31,156 @@ public class ListaEnlazada<T> implements Secuencia<T> {
         }
     }
 
+    //O(1)
     public int longitud() {
-        int len = 0;
-        Nodo actual = primero;
-        while (actual!=null) {
-            actual = actual.sig;
-            len++;
-        }
-        return len;
+        return _longitud;
     }
     
 
+    // O(1)
     public void agregarAdelante(T elem) {
         Nodo nuevo = new Nodo(elem);
-        nuevo.sig = primero;
-        primero = nuevo;
 
+        //no hay nodos
+        if (longitud()==0) {
+            ultimo = nuevo;
+            primero = nuevo;
+
+        } else {
+            nuevo.sig = primero;
+            primero.ant = nuevo;
+            primero = nuevo;
+        }
+        _longitud++;
     }
 
+    //O(1) + obtenerNodo O(n/2)
+    public void agregarAntesDeNodo(int i,T elem) {
 
+        //i==0: agregar antes del primero = agregar adelante
+        if (i==0) {
+            agregarAdelante(elem);
+            return;
+        }
+
+        Nodo nuevo = new Nodo(elem);
+        Nodo derecho = obtenerNodo(i);
+        Nodo izquierdo = derecho.ant;
+
+        nuevo.sig = derecho;
+        nuevo.ant = izquierdo;
         
+        izquierdo.sig = nuevo;
+        derecho.ant = nuevo;
 
+        _longitud++;
+    }
+
+    // O(1)
     public void agregarAtras(T elem) {
         Nodo nuevo = new Nodo(elem);
-        if (primero==null){
+        if (longitud()==0){
             primero = nuevo;
+            ultimo = nuevo;
         } else {
-            Nodo actual = primero;
-            while(actual.sig!=null){
-                actual = actual.sig;
-            }
-            
-            actual.sig = nuevo;
-            nuevo.ant = actual;
+            Nodo ultimoViejo = ultimo;
+            ultimoViejo.sig = nuevo;
+            nuevo.ant = ultimoViejo;
+            ultimo = nuevo;
         }
+        _longitud++;
     }
 
+    //O(n/2)
+    public Nodo obtenerNodo(int i) {
+        Nodo actual;
+
+        //indice a buscar mas cerca del primero que del ultimo
+        if (i<((longitud()-1)/2)) {
+            actual = primero;
+            int j = 0;
+            while (j<i) {
+                actual = actual.sig;
+                j++;
+            }
+        
+        //indice a buscar mas cerca del ultimo que del primero
+        } else {
+            actual = ultimo;
+            int j = longitud()-1;
+            while (i<j) {
+                actual = actual.ant;
+                j--;
+            }
+        }
+        return actual;
+    }
+
+    //O(n/2)
     public T obtener(int i) {
-        int j = 0;
-        Nodo actual = primero;
-        while (j<i) {
-            actual = actual.sig;
-            j++;
+        Nodo actual;
+
+        //indice a buscar mas cerca del primero que del ultimo
+        if (i<=((longitud()-1)/2)) {
+            actual = primero;
+            int j = 0;
+            while (j<i) {
+                actual = actual.sig;
+                j++;
+            }
+        
+        //indice a buscar mas cerca del ultimo que del primero
+        } else {
+            actual = ultimo;
+            int j = longitud()-1;
+            while (i<j) {
+                actual = actual.ant;
+                j--;
+            }
         }
         return actual.valor;
     }
 
+    //O(n/2)
     public void eliminar(int i) {
-        int j = 0;
-        Nodo previo = primero.ant;
-        Nodo actual = primero;
         
-        
+        //nodo unico
         if (longitud()==1) {
             primero = null;
+            ultimo = null;
         } else {
-            while (j<i) {
-                previo = actual;
-                actual = actual.sig;
-                j++;
-            }
-            if (i == 0) {
-                primero = actual.sig;
-                primero.ant = null;
-            } else if (i < longitud()-1){
-                previo.sig = actual.sig;
-                actual.sig.ant = previo;
-    
+
+            Nodo eliminar = obtenerNodo(i);
+
+            //no existe nodo izquierdo (eliminar es el primer nodo)
+            if (eliminar.ant==null) {
+                Nodo derecho = eliminar.sig;
+                derecho.ant = null;
+                primero = derecho;
+
+            //no existe nodo derecho (eliminar es el ultimo nodo)
+            } else if (eliminar.sig!=null) {
+                Nodo izquierdo = eliminar.ant;
+                izquierdo.sig = null;
+                ultimo = izquierdo;
+
+            //el nodo eliminar esta por el medio
             } else {
-                previo.sig = actual.sig;
+                Nodo derecho = eliminar.sig;
+                Nodo izquierdo = eliminar.ant;
+                derecho.ant = izquierdo;
+                izquierdo.sig = derecho;
             }
         }
     }
 
+    //O(n/2)
     public void modificarPosicion(int indice, T elem) {
-        int j = 0;
-        Nodo actual = primero;
-        while (j<indice) {
-            actual = actual.sig;
-            j++;
-        }
-        actual.valor = elem;
+        Nodo nodo = obtenerNodo(indice);
+        nodo.valor = elem;
     }
 
+    //O(n)
     public ListaEnlazada<T> copiar() {
         ListaEnlazada<T> copia = new ListaEnlazada<>();
         int i = 0;
@@ -121,6 +193,7 @@ public class ListaEnlazada<T> implements Secuencia<T> {
     }
 
     
+    //O(n)
     @Override
     public String toString() {
         String str = "[";
