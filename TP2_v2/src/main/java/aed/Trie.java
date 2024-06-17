@@ -11,14 +11,18 @@ public class Trie<T>{
         ListaEnlazada<NodoTrie> hijos;
         //Iterador<NodoTrie> iterador;
 
-        NodoTrie padre;
+
+        //por ahora no usamos padre
+        //NodoTrie padre;
         char valor;
         T datos;
         
         NodoTrie(char v){
             this.valor = v;
             this.datos = null;
-            this.padre = null;
+            
+            //por ahora no usamos padre
+            //this.padre = null;
             this.hijos = new ListaEnlazada<>();
         }
     }
@@ -42,29 +46,38 @@ public class Trie<T>{
         NodoTrie nuevoNodo;
 
         for (int i = 0; i < palabra.length(); i++) {
-            nuevoNodo = new NodoTrie(palabra.charAt(i));
-            nuevoNodo.padre = nodoActual;
-            Boolean nodoAgregado = false;
+            char caracter = palabra.charAt(i);
+            nuevoNodo = new NodoTrie(caracter);
 
-            if (nodoActual.hijos.longitud()==0) {
+            
+            //por ahora no usamos padre
+            //nuevoNodo.padre = nodoActual;
+            Boolean nodoAgregado = false;
+            int cantidadHijosNodoActual = nodoActual.hijos.longitud();
+
+            if (cantidadHijosNodoActual==0) {
                 nodoActual.hijos.agregarAdelante(nuevoNodo);
                 nodoActual = nuevoNodo;
 
             } else {
 
-                for (int j = 0; j < nodoActual.hijos.longitud(); j++) {
-                    NodoTrie nodo = nodoActual.hijos.obtener(j);
-                    nodo.padre = nodoActual;
+                for (int j = 0; j < cantidadHijosNodoActual; j++) {
+                    NodoTrie nodoHijo = nodoActual.hijos.obtener(j);
+                    
 
-                    if (nodo.valor>palabra.charAt(i)) {
+                    if (caracter<nodoHijo.valor && j==0) {
                         nodoActual.hijos.agregarAdelante(nuevoNodo);
                         nodoAgregado = true;
 
-                    } else if (nodo.valor==palabra.charAt(i)){
-                        nuevoNodo = nodo;
+                    } else if (caracter<nodoHijo.valor) {
+                        nodoActual.hijos.agregarAntesDeNodo(j, nuevoNodo);
                         nodoAgregado = true;
 
-                    } else if (j==nodoActual.hijos.longitud()-1) {
+                    } else if (caracter==nodoHijo.valor) {
+                        nuevoNodo = nodoHijo;
+                        nodoAgregado = true;
+
+                    } else if (j==cantidadHijosNodoActual-1) {
                         nodoActual.hijos.agregarAtras(nuevoNodo);
                         nodoAgregado = true;
                     }
@@ -72,10 +85,16 @@ public class Trie<T>{
                     if (nodoAgregado) {
                         nodoActual = nuevoNodo;
                         break;
+
                     }
                 }
             }
         }
+        if (altura()<palabra.length()) {
+            _altura = palabra.length();
+        }
+
+        //agregar data al nodo del ultimo caracter
         nodoActual.datos = data;
         _total++;
     }
