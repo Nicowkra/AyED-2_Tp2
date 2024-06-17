@@ -1,5 +1,7 @@
 package aed;
 
+import java.util.ArrayList;
+
 public class Trie<T>{
     private NodoTrie _raiz;
     private int _altura;
@@ -27,22 +29,27 @@ public class Trie<T>{
         }
     }
 
+    //O(1)
     public Trie() {
         this._raiz = new NodoTrie('\0');
         this._altura = 0;
         this._total = 0;
     }
 
+    //O(1)
     public int totalPalabras(){
-        return _total;
+        return this._total;
     }
 
+    //O(1)
     public int altura(){
-        return _altura;
+        return this._altura;
     }
 
+    
+    //O(palabra.length())
     public void agregar (String palabra, T data){
-        NodoTrie nodoActual = _raiz;
+        NodoTrie nodoActual = this._raiz;
         NodoTrie nuevoNodo;
 
         for (int i = 0; i < palabra.length(); i++) {
@@ -91,17 +98,19 @@ public class Trie<T>{
             }
         }
         if (altura()<palabra.length()) {
-            _altura = palabra.length();
+            this._altura = palabra.length();
         }
 
         //agregar data al nodo del ultimo caracter
         nodoActual.datos = data;
-        _total++;
+        this._total++;
     }
 
+    
+    //O(palabra.length())
     public T obtener (String palabra){
         NodoTrie nodoActual;
-        nodoActual = _raiz;
+        nodoActual = this._raiz;
 
         for (int i = 0; i < palabra.length(); i++) {
             if (nodoActual.hijos.longitud()>0) {
@@ -184,8 +193,9 @@ public class Trie<T>{
         return data;
     }
 
+    //O()
     public void eliminar (String palabra){
-        NodoTrie nodoActual = _raiz;
+        NodoTrie nodoActual = this._raiz;
         NodoTrie nodoAEliminar;
         Boolean eliminarRama;
         Object[] data;
@@ -216,11 +226,17 @@ public class Trie<T>{
                     //la rama tiene que ser eliminada
                     nodoActual.hijos.eliminar(indiceNodoHijo);
                 }
-                _total--;
+                this._total--;
             } else {
                 //nodo a eliminar se actualizo
                 nodoActual = nodoAEliminar;
             }
         }
+    }
+
+    public String[] palabras() {
+        String[] arr = new String[0];
+        // no implementado
+        return arr;
     }
 }
