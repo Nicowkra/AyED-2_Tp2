@@ -3,8 +3,8 @@ package aed;
 import java.util.ArrayList;
 
 public class SistemaSIU {
-    private Trie<Carrera> _carreras;
-    private Trie<Alumno> _alumnos;
+    private DictTrie<Carrera> _carreras;
+    private DictTrie<Alumno> _alumnos;
     private ArrayList<Materia> _materias;
     enum CargoDocente{
         AY2,
@@ -14,8 +14,8 @@ public class SistemaSIU {
     }
 
     public SistemaSIU(InfoMateria[] infoMaterias, String[] libretasUniversitarias){
-       this._carreras = new Trie<Carrera>();
-       this._alumnos = new Trie<Alumno>();
+       this._carreras = new DictTrie<Carrera>();
+       this._alumnos = new DictTrie<Alumno>();
        this._materias = new ArrayList<Materia>();
        
     
@@ -25,7 +25,7 @@ public class SistemaSIU {
             for (int j= 0;j < nombres.length; j += 1){
                 String nombreCarrera = nombres[j].carrera;
                 String nombreMateria = nombres[j].nombreMateria;
-                Carrera actual = this._carreras.obtener(nombreCarrera);
+                Carrera actual = (Carrera) this._carreras.obtener(nombreCarrera);
                 if (actual == null){
                     Carrera nuevaCarrera = new Carrera();
                     this._carreras.agregar(nombreCarrera,nuevaCarrera);
@@ -43,16 +43,16 @@ public class SistemaSIU {
     }
 
     public void inscribir(String estudiante, String carrera, String materia){
-       Carrera carreraActual = this._carreras.obtener(carrera);
+       Carrera carreraActual = (Carrera) this._carreras.obtener(carrera);
        Materia materiaActual = carreraActual.obtenerMateria(materia);
-       Alumno alumnoActual = this._alumnos.obtener(estudiante);
+       Alumno alumnoActual = (Alumno) this._alumnos.obtener(estudiante);
        alumnoActual.agregarMateria();
        materiaActual.inscribir(estudiante);
 
     }
 
     public void agregarDocente(CargoDocente cargo, String carrera, String materia){
-        Carrera carreraActual = this._carreras.obtener(carrera);
+        Carrera carreraActual = (Carrera) this._carreras.obtener(carrera);
         Materia materiaActual = carreraActual.obtenerMateria(materia);
        if (cargo == CargoDocente.PROF){
         materiaActual.agregarProfesor();
@@ -69,7 +69,7 @@ public class SistemaSIU {
     }
 
     public int[] plantelDocente(String materia, String carrera){
-        Carrera carreraActual = this._carreras.obtener(carrera);
+        Carrera carreraActual = (Carrera) this._carreras.obtener(carrera);
         Materia materiaActual = carreraActual.obtenerMateria(materia);
         return materiaActual.obtenerDocentes();
     }
@@ -79,19 +79,19 @@ public class SistemaSIU {
     }
 
     public int inscriptos(String materia, String carrera){
-        Carrera carreraActual = this._carreras.obtener(carrera);
+        Carrera carreraActual = (Carrera) this._carreras.obtener(carrera);
         Materia materiaActual = carreraActual.obtenerMateria(materia);
         return materiaActual.cantidadAlumnos();
         }
 
     public boolean excedeCupo(String materia, String carrera){
-        Carrera carreraActual = this._carreras.obtener(carrera);
+        Carrera carreraActual = (Carrera) this._carreras.obtener(carrera);
         Materia materiaActual = carreraActual.obtenerMateria(materia);
         return materiaActual.excedeCupo();
     }
 
     public String[] carreras(){
-        throw new UnsupportedOperationException("Método no implementado aún");	    
+        return _carreras.palabras();
     }
 
     public String[] materias(String carrera){
@@ -99,7 +99,7 @@ public class SistemaSIU {
     }
 
     public int materiasInscriptas(String estudiante){
-        Alumno alumnoActual = this._alumnos.obtener(estudiante);
+        Alumno alumnoActual = (Alumno) this._alumnos.obtener(estudiante);
         return alumnoActual.cantidadMaterias();
     }
 }
