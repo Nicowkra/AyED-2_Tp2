@@ -3,6 +3,7 @@ package aed;
 import java.util.ArrayList;
 
 public class SistemaSIU {
+    private InfoMateria[] infoMaterias;
     private DictTrie<Carrera> _carreras;
     private DictTrie<Alumno> _alumnos;
     private ArrayList<Materia> _materias;
@@ -14,6 +15,7 @@ public class SistemaSIU {
     }
 
     public SistemaSIU(InfoMateria[] infoMaterias, String[] libretasUniversitarias){
+       this.infoMaterias = infoMaterias;
        this._carreras = new DictTrie<Carrera>();
        this._alumnos = new DictTrie<Alumno>();
        this._materias = new ArrayList<Materia>();
@@ -74,8 +76,47 @@ public class SistemaSIU {
         return materiaActual.obtenerDocentes();
     }
 
+    private ParCarreraMateria[] buscarEnInfoMaterias(String materia, String carrera) {
+        ParCarreraMateria[] info = null;
+
+        for (int i = 0; i < infoMaterias.length; i++) {
+            ParCarreraMateria[] pares = (infoMaterias[i].getParesCarreraMateria());
+
+            for (int j = 0; j < pares.length; j++) {
+                    
+                if (pares[j].getCarrera()==carrera && 
+                    pares[j].getNombreMateria()==materia) {
+
+                    info = pares;
+                    break;
+                }
+            }
+            if (info != null) {
+                break;
+            }
+        }
+        return info;
+    }
+
     public void cerrarMateria(String materia, String carrera){
-        throw new UnsupportedOperationException("Método no implementado aún");	    
+        Carrera carreraActual;
+        Materia materiaActual = null;
+        ParCarreraMateria[] info = buscarEnInfoMaterias(materia, carrera);
+        for (int i = 0; i < info.length; i++) {
+            
+            carreraActual = (Carrera) _carreras.obtener(info[i].getCarrera());
+
+            //lo hace una sola vez
+            if (materiaActual == null) {
+                materiaActual = (Materia) carreraActual.obtenerMateria(info[i].getNombreMateria());
+            }   
+            carreraActual.cerrarMateria(info[i].getNombreMateria());
+        }
+        for (int i = 0; i < materiaActual.cantidadAlumnos(); i++) {
+            String LU = materiaActual.obtenerAlumnos().get(i);
+            Alumno alumnoActual = (Alumno) _alumnos.obtener(LU);
+            alumnoActual.dejarMateria();
+        }
     }
 
     public int inscriptos(String materia, String carrera){
@@ -95,7 +136,8 @@ public class SistemaSIU {
     }
 
     public String[] materias(String carrera){
-        throw new UnsupportedOperationException("Método no implementado aún");	    
+        Carrera carreraActual = (Carrera) _carreras.obtener(carrera);
+        return carreraActual.materiasEnCarreras();
     }
 
     public int materiasInscriptas(String estudiante){
