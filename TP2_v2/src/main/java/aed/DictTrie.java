@@ -5,7 +5,7 @@ public class DictTrie<T> {
     private int _altura;
     private int _total;
 
-      private static class Nodo {
+    private static class Nodo {
         private int cantHijos;
         private Nodo[] hijos;
         private Object datos;
@@ -47,15 +47,15 @@ public class DictTrie<T> {
     public void agregar(String palabra, T data) {
         Nodo actual = this._raiz;
         for (char ch : palabra.toCharArray()) {
-          int ind = (int) ch;
-          if (actual.hijos[ind] == null) {
-            //agrega caracter
-            actual.hijos[ind] = new Nodo();
-            actual.hijos[ind].padre = actual;
-            actual.cantHijos++;
-          }
+            int ind = (int) ch;
+            if (actual.hijos[ind] == null) {
+                //agrega caracter
+                actual.hijos[ind] = new Nodo();
+                actual.hijos[ind].padre = actual;
+                actual.cantHijos++;
+            }
 
-          actual = actual.hijos[ind];
+            actual = actual.hijos[ind];
         }
 
         if (altura()<palabra.length()) {
@@ -65,7 +65,7 @@ public class DictTrie<T> {
         //agregar data al nodo del ultimo caracter
         actual.datos = data;
         this._total++;
-      }
+    }
     
     //O(1)
     public Object obtener (String palabra) {
@@ -81,7 +81,7 @@ public class DictTrie<T> {
         return actual.datos;
     }
 
-    private Object[] hijoAEliminar(Nodo raiz, String subPalabra) {
+    private Object[] auxiliarEleminar(Nodo raiz, String subPalabra) {
         Object[] data = new Object[4];
         data[0] = raiz;
         data[1] = (int) -1;
@@ -103,42 +103,43 @@ public class DictTrie<T> {
         for (int i = 0; i < subPalabra.length(); i++) {
 
             if (nodoActual.longitud()>0) {
-                    char ch = subPalabra.charAt(i);
-                    int ind = (int) ch;
+                char ch = subPalabra.charAt(i);
+                int ind = (int) ch;
 
-                    Nodo nodo = nodoActual.hijos[ind];
+                Nodo nodo = nodoActual.hijos[ind];
 
-                    if (i==0) {
-                        data[1] = ind;
-                    }
+                if (i==0) {
+                    data[1] = ind;
+                }
 
-                    if (i!=subPalabra.length()-1) {
-                        // si 'nodo' no es el nodoObjetivo
+                if (i!=subPalabra.length()-1) {
+                    // si 'nodo' no es el nodoObjetivo
 
-                        if (nodo.datos!=null || nodoActual.longitud()>1) {
-                            data[0] = nodo;
-                            data[1] = (int) ind;
-                            data[2] = (int) i + 1;
-                            return data;
-                        }
-                    } else {
-                        // si 'nodo' es el nodoObjetivo
-
-                        if (nodo.longitud()>0) {
-                            // contiene uno o mas nodos importantes
-                            data[0] = nodoActual;
-
-                        } else {
-                            //  ultimo nodo en la rama
-
-                            data[0] = raiz;
-                            data[3] = true;
-                        }
+                    if (nodo.datos!=null || nodo.longitud()>1) {
+                        data[0] = nodo;
                         data[1] = (int) ind;
                         data[2] = (int) i + 1;
                         return data;
                     }
-                    nodoActual = nodo;
+                } else {
+                    // si 'nodo' es el nodoObjetivo
+
+                    if (nodo.longitud()>0) {
+                        // contiene uno o mas nodos importantes
+                        data[0] = nodoActual;
+                        data[1] = (int) ind;
+                        data[2] = (int) i;
+
+                    } else {
+                        //  ultimo nodo en la rama
+
+                        data[0] = raiz;
+                        data[2] = (int) i;
+                        data[3] = true;
+                    }
+                    return data;
+                }
+                nodoActual = nodo;
             }
         }
         return data;
@@ -150,14 +151,15 @@ public class DictTrie<T> {
         Nodo nodoAEliminar;
         Boolean eliminarRama;
         Object[] data;
+        Boolean palabraEliminada = false;
         int i = 0;
-        while (i<palabra.length()) {
+        while (!palabraEliminada) {
 
             //data[0]: nodo padre del hijo a eliminar
             //data[1]: indice hijo
             //data[2]: caracteres recorridos
             //data[3]: si es posible eliminar la rama subyacente del árbol.
-            data = hijoAEliminar(nodoActual, palabra.substring(i));
+            data = auxiliarEleminar(nodoActual, palabra.substring(i));
 
             nodoAEliminar = (Nodo) data[0];
             int indiceNodoHijo = (int) data[1];
@@ -168,14 +170,15 @@ public class DictTrie<T> {
                 
                 Nodo nodoObjetivo = nodoActual.hijos[indiceNodoHijo];
 
-                
-                if (i==palabra.length() && !eliminarRama) {
+                if (i==palabra.length()-1 && !eliminarRama) {
                     //no es posible eliminar la rama (nodos importantes>1)
                     nodoObjetivo.datos = null;
                 } else {
                     //la rama tiene que ser eliminada
                     nodoActual.hijos[indiceNodoHijo] = null;
+                    nodoActual.cantHijos--;
                 }
+                palabraEliminada = true;
                 this._total--;
             } else {
                 //nodo a eliminar se actualizo
@@ -189,6 +192,7 @@ public class DictTrie<T> {
         String[] arr = new String[_total];
         Nodo nodoActual = _raiz;
         int ultimoCaracter = -1;
+        int ultimoHijo = 0;
         String prefijo = "";
         int i = 0;
 
@@ -215,13 +219,36 @@ public class DictTrie<T> {
             }
 
             //vuelve a nodo de arriba hasta que tenga mas de un hijo
-            while (nodoActual.longitud()<=1) {
+            if (i < _total) {
                 int indChar = prefijo.length()-1;
                 ultimoCaracter = (int) prefijo.charAt(indChar);
                 prefijo = prefijo.substring(0, indChar);
                 nodoActual = nodoActual.padre;
+                ultimoHijo = obtenerUltimoHijo(nodoActual);
+                
+                while (ultimoHijo==ultimoCaracter) {
+                    indChar = prefijo.length()-1;
+                    ultimoCaracter = (int) prefijo.charAt(indChar);
+                    prefijo = prefijo.substring(0, indChar);
+                    nodoActual = nodoActual.padre;
+                    ultimoHijo = obtenerUltimoHijo(nodoActual);
+                }
             }
         }
         return arr;
+    }
+
+    private int obtenerUltimoHijo(Nodo raiz) {
+        int hijosNoNulos = raiz.longitud()-1;
+        int actualHijoNoNulo = 0;
+        for (int i = 0; i < raiz.hijos.length; i++) {
+            if (raiz.hijos[i] != null) {
+                if (hijosNoNulos==actualHijoNoNulo) {
+                    return i;
+                }
+                actualHijoNoNulo++;
+            }
+        }
+        return -2;
     }
 }
