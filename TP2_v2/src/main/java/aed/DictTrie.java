@@ -43,6 +43,7 @@ public class DictTrie<T> {
     }
 
 
+    //O(1)
     public void agregar(String palabra, T data) {
         Nodo actual = this._raiz;
         for (char ch : palabra.toCharArray()) {
@@ -66,7 +67,8 @@ public class DictTrie<T> {
         this._total++;
       }
     
-      public Object obtener (String palabra) {
+    //O(1)
+    public Object obtener (String palabra) {
         Nodo actual = this._raiz;
         for (char ch : palabra.toCharArray()) {
           int ind = (int) ch;
@@ -77,9 +79,9 @@ public class DictTrie<T> {
           actual = actual.hijos[ind];
         }
         return actual.datos;
-      }
+    }
 
-      private Object[] hijoAEliminar(Nodo raiz, String subPalabra) {
+    private Object[] hijoAEliminar(Nodo raiz, String subPalabra) {
         Object[] data = new Object[4];
         data[0] = raiz;
         data[1] = (int) -1;
@@ -142,7 +144,8 @@ public class DictTrie<T> {
         return data;
     }
 
-      public void eliminar(String palabra) {
+    //O(1)
+    public void eliminar(String palabra) {
         Nodo nodoActual = this._raiz;
         Nodo nodoAEliminar;
         Boolean eliminarRama;
@@ -179,9 +182,10 @@ public class DictTrie<T> {
                 nodoActual = nodoAEliminar;
             }
         }
-      }
+    }
 
-      public String[] palabras() {
+    //O(n)
+    public String[] palabras() {
         String[] arr = new String[_total];
         Nodo nodoActual = _raiz;
         int ultimoCaracter = -1;
