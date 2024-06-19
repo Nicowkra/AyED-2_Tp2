@@ -34,6 +34,9 @@ public void agregarAy2(){
 public int[] obtenerDocentes(){
     return this._docentes;
 }
+public ArrayList<String> obtenerAlumnos(){
+    return this._alumnado;
+}
 public boolean excedeCupo(){
     int cantAlumnos = this._alumnado.size();
     boolean excedeProfesores = cantAlumnos > 250 * this._docentes[0];
