@@ -1,5 +1,5 @@
 package aed;
-
+//Invariante de representación: ni carrera ni nombreMateria pueden ser null.
 public class ParCarreraMateria {
     String carrera;
     String nombreMateria;
@@ -17,3 +17,4 @@ public class ParCarreraMateria {
         return this.carrera;
     }
 }
+//Todas las complejidades son O(1)

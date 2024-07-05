@@ -1,5 +1,9 @@
 package aed;
 
+//Invariante de representación: No se llega por dos claves al mismo nodo, los nodos tienen un solo padre salvo la raíz, y es un árbol.
+//No hay nodos que no tengan significado ni hijos.
+
+
 public class DictTrie<T> {
     private Nodo _raiz;
     private int _altura;
@@ -42,6 +46,10 @@ public class DictTrie<T> {
         return this._altura;
     }
 
+    //O(1)
+    public void agregar(String palabra) {
+        agregar(palabra, true);
+    }
 
     //O(1)
     public void agregar(String palabra, T data) {

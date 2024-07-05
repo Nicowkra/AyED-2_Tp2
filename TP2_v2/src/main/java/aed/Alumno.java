@@ -1,5 +1,7 @@
 package aed;
 
+
+//Invariante de representación: _cantidadMaterias es mayor o igual a 0 y menor o igual a la cantidad de materias que hay. Representa la cantidad de materias a las que está inscripto el alumno.  
 public class Alumno {
     private int _cantidadMaterias;
 
@@ -19,3 +21,4 @@ public int cantidadMaterias(){
 }
 
 }
+//Todas las implementaciones son O(1)
