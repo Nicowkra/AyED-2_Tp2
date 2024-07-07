@@ -48,7 +48,8 @@ public class DictTrie<T> {
 
     //O(1)
     public void agregar(String palabra) {
-        agregar(palabra, true);
+        // como dato agrega un string vacio para indicar final de palabra
+        agregar(palabra, (T) "");
     }
 
     //O(1)
