@@ -14,7 +14,7 @@ public class Materia {
         this._alumnado.agregar(libreta);
     }
     public int cantidadAlumnos(){                 //O(1)
-        return this._alumnado.size();
+        return this._alumnado.totalPalabras();
     }
     public void agregarProfesor(){                //O(1)
         this._docentes[0] = this._docentes[0]+1;
@@ -31,11 +31,11 @@ public class Materia {
     public int[] obtenerDocentes(){               //O(1)
         return this._docentes;
     }
-    public ArrayList<String> obtenerAlumnos(){    //O(1)
-        return this._alumnado;
+    public String[] obtenerAlumnos(){             //O(1)
+        return this._alumnado.palabras();
     }
     public boolean excedeCupo(){                  //O(1)
-        int cantAlumnos = this._alumnado.size();
+        int cantAlumnos = cantidadAlumnos();
         boolean excedeProfesores = cantAlumnos > 250 * this._docentes[0];
         boolean excedeJtp = cantAlumnos > 100 * this._docentes[1];
         boolean excedeAy1 = cantAlumnos > 20 * this._docentes[2];

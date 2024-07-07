@@ -122,8 +122,9 @@ public class SistemaSIU {
             }   
             carreraActual.cerrarMateria(info[i].getNombreMateria());    //O(|m|)
         }
-        for (int i = 0; i < materiaActual.cantidadAlumnos(); i++) {     //O(Em): La cantidad de alumnos inscriptos en la materia
-            String LU = materiaActual.obtenerAlumnos().get(i);          //O(1)
+        String[] libretas = materiaActual.obtenerAlumnos();             //O(Em): La cantidad de alumnos inscriptos en la materia
+        for (int i = 0; i < materiaActual.cantidadAlumnos(); i++) {     //O(Em)
+            String LU = libretas[i];                                    //O(1)
             Alumno alumnoActual = (Alumno) _alumnos.obtener(LU);        //O(1): LU está acotada
             alumnoActual.dejarMateria();                                //O(1)
         }
