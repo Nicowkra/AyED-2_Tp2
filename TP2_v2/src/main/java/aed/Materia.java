@@ -5,36 +5,40 @@ package aed;
 public class Materia {
     private int[] _docentes;
     private DictTrie<String> _alumnado;
+    public ParCarreraMateria[] _nombres;                //nombres de la materia en las distintas carreras presente
+    public Carrera[] _enCarreras;                       //lista de carreras en las que esta presente materia
     
-    public Materia(){
+    public Materia(ParCarreraMateria[] nombres){
+        this._enCarreras = new Carrera[nombres.length]; //inicializa con la cantidad de carreras que esta presente
+        this._nombres = nombres;                        //guarda los nombres de infoMateria
         this._docentes = new int[4];
         this._alumnado = new DictTrie<String>();
     }
-    public void inscribir (String libreta){       //O(1) porque libreta está acotado
+    public void inscribir (String libreta){             //O(1) porque libreta está acotado
         this._alumnado.agregar(libreta);
     }
-    public int cantidadAlumnos(){                 //O(1)
+    public int cantidadAlumnos(){                       //O(1)
         return this._alumnado.totalPalabras();
     }
-    public void agregarProfesor(){                //O(1)
+    public void agregarProfesor(){                      //O(1)
         this._docentes[0] = this._docentes[0]+1;
     }
-    public void agregarJtp(){                     //O(1)
+    public void agregarJtp(){                           //O(1)
         this._docentes[1] = this._docentes[1]+1;
     }
-    public void agregarAy1(){                     //O(1)
+    public void agregarAy1(){                           //O(1)
         this._docentes[2] = this._docentes[2]+1;
     }
-    public void agregarAy2(){                     //O(1)
+    public void agregarAy2(){                           //O(1)
         this._docentes[3] = this._docentes[3]+1;
     }
-    public int[] obtenerDocentes(){               //O(1)
+    public int[] obtenerDocentes(){                     //O(1)
         return this._docentes;
     }
-    public String[] obtenerAlumnos(){             //O(1)
+    public String[] obtenerAlumnos(){                   //O(1)
         return this._alumnado.palabras();
     }
-    public boolean excedeCupo(){                  //O(1)
+    public boolean excedeCupo(){                        //O(1)
         int cantAlumnos = cantidadAlumnos();
         boolean excedeProfesores = cantAlumnos > 250 * this._docentes[0];
         boolean excedeJtp = cantAlumnos > 100 * this._docentes[1];

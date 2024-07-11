@@ -25,14 +25,16 @@ public class SistemaSIU {
        
     
        for(int i= 0;i < infoMaterias.length; i += 1){                           //O(Conjunto de materias) 
-            Materia nuevaMateria = new Materia();
             ParCarreraMateria[] nombres = (infoMaterias[i].getParesCarreraMateria());
+            Materia nuevaMateria = new Materia(nombres);
+
             for (int j= 0;j < nombres.length; j += 1){                           //O(Nm): Conjunto de todos los nombres de una materia
                 String nombreCarrera = nombres[j].carrera;
                 String nombreMateria = nombres[j].nombreMateria;
                 Carrera actual = (Carrera) this._carreras.obtener(nombreCarrera); // O(|c|): Cantidad de caracteres de la carrera
                 if (actual == null){                                              //Este if tiene una complejidad de O(|m|), como se puede ver abajo.
                     Carrera nuevaCarrera = new Carrera();                         //O(1)
+                    nuevaMateria._enCarreras[j] = nuevaCarrera;                   //O(1)
                     this._carreras.agregar(nombreCarrera,nuevaCarrera);           //O(|m|): Cantidad de caracteres de la materia 
                     nuevaCarrera.crearMateria(nombreMateria,nuevaMateria);        //O(|m|)
                 }else{
@@ -108,26 +110,54 @@ public class SistemaSIU {
         return info;
     }  //Esta auxiliar tiene una complejidad de O(M * Nm).
 
+
+    
+    // necesito: O(|c| + |m| + Em + Σ (n ∈ Nm) |n|)
+
     public void cerrarMateria(String materia, String carrera){
+        Carrera carreraActual = (Carrera) this._carreras.obtener(carrera);       // O(|c|): Cantidad de caracteres de la carrera
+        Materia materiaActual = carreraActual.obtenerMateria(materia);           // O(|m|): Cantidad de caracteres de la materia
+        ParCarreraMateria[] info = materiaActual._nombres;                       // O(1)
+        Carrera[] carreras = materiaActual._enCarreras;
+
+        for (int i = 0; i < info.length; i++) {                                  // O(Nm)
+            
+            carreraActual = (Carrera) _carreras.obtener(info[i].getCarrera());   // O(|c|)
+            
+
+            carreraActual.cerrarMateria(info[i].getNombreMateria());             // O(|n|)
+        }// O ((n ∈ Nm) |n|*|c|) creo que queda asi esta compl
+
+
+        String[] libretas = materiaActual.obtenerAlumnos();                      // O(Em): La cantidad de alumnos inscriptos en la materia
+        for (int i = 0; i < materiaActual.cantidadAlumnos(); i++) {              // O(Em)
+            String LU = libretas[i];                                             // O(1)
+            Alumno alumnoActual = (Alumno) _alumnos.obtener(LU);                 // O(1): LU está acotada
+            alumnoActual.dejarMateria();                                         // O(1)
+        }
+    }
+
+    public void cerrarMateria0(String materia, String carrera){
         Carrera carreraActual;
         Materia materiaActual = null;
-        ParCarreraMateria[] info = buscarEnInfoMaterias(materia, carrera);   //O(M * Nm)
+        ParCarreraMateria[] info = buscarEnInfoMaterias(materia, carrera);                          //O(M * Nm)
         for (int i = 0; i < info.length; i++) {                              
             
-            carreraActual = (Carrera) _carreras.obtener(info[i].getCarrera());      //O(|c|)
+            carreraActual = (Carrera) _carreras.obtener(info[i].getCarrera());                      //O(|c|)
 
             //lo hace una sola vez
             if (materiaActual == null) {
-                materiaActual = (Materia) carreraActual.obtenerMateria(info[i].getNombreMateria());     //O(|m|)
+                materiaActual = (Materia) carreraActual.obtenerMateria(info[i].getNombreMateria()); //O(|m|)
             }   
-            carreraActual.cerrarMateria(info[i].getNombreMateria());    //O(|m|)
+            carreraActual.cerrarMateria(info[i].getNombreMateria());                                //O(|m|)
         }
-        String[] libretas = materiaActual.obtenerAlumnos();             //O(Em): La cantidad de alumnos inscriptos en la materia
-        for (int i = 0; i < materiaActual.cantidadAlumnos(); i++) {     //O(Em)
-            String LU = libretas[i];                                    //O(1)
-            Alumno alumnoActual = (Alumno) _alumnos.obtener(LU);        //O(1): LU está acotada
-            alumnoActual.dejarMateria();                                //O(1)
+        String[] libretas = materiaActual.obtenerAlumnos();                                         //O(Em): La cantidad de alumnos inscriptos en la materia
+        for (int i = 0; i < materiaActual.cantidadAlumnos(); i++) {                                 //O(Em)
+            String LU = libretas[i];                                                                //O(1)
+            Alumno alumnoActual = (Alumno) _alumnos.obtener(LU);                                    //O(1): LU está acotada
+            alumnoActual.dejarMateria();                                                            //O(1)
         }
+
     } //Tiene una complejidad de O(|c| + |m| + Em + M * Nm) pero como vimos antes, M * Nm es igual a  Σ (n ∈ Nm) |n|, por lo que queda la complejidad deseada, de:
       //  O(|c| + |m| + Em + Σ (n ∈ Nm) |n|)
     public int inscriptos(String materia, String carrera){
