@@ -117,16 +117,19 @@ public class SistemaSIU {
     public void cerrarMateria(String materia, String carrera){
         Carrera carreraActual = (Carrera) this._carreras.obtener(carrera);       // O(|c|): Cantidad de caracteres de la carrera
         Materia materiaActual = carreraActual.obtenerMateria(materia);           // O(|m|): Cantidad de caracteres de la materia
+        
+        
         ParCarreraMateria[] info = materiaActual._nombres;                       // O(1)
-        Carrera[] carreras = materiaActual._enCarreras;
+        Carrera[] carreras = materiaActual._enCarreras;                          // O(1)
+
+        //carreras e info conservan el mismo orden y tienen la misma longitud 
+        //(info[0] refiere a los datos de carreras[0])
 
         for (int i = 0; i < info.length; i++) {                                  // O(Nm)
             
-            carreraActual = (Carrera) _carreras.obtener(info[i].getCarrera());   // O(|c|)
-            
-
+            carreraActual = (Carrera) carreras[i];                               // O(1)
             carreraActual.cerrarMateria(info[i].getNombreMateria());             // O(|n|)
-        }// O ((n ∈ Nm) |n|*|c|) creo que queda asi esta compl
+        }
 
 
         String[] libretas = materiaActual.obtenerAlumnos();                      // O(Em): La cantidad de alumnos inscriptos en la materia
