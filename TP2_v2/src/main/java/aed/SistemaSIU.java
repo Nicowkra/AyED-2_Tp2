@@ -27,14 +27,15 @@ public class SistemaSIU {
        for(int i= 0;i < infoMaterias.length; i += 1){                           //O(Conjunto de materias) 
             ParCarreraMateria[] nombres = (infoMaterias[i].getParesCarreraMateria());
             Materia nuevaMateria = new Materia(nombres);
-
+            
+            
             for (int j= 0;j < nombres.length; j += 1){                           //O(Nm): Conjunto de todos los nombres de una materia
                 String nombreCarrera = nombres[j].carrera;
                 String nombreMateria = nombres[j].nombreMateria;
                 Carrera actual = (Carrera) this._carreras.obtener(nombreCarrera); // O(|c|): Cantidad de caracteres de la carrera
                 if (actual == null){                                              //Este if tiene una complejidad de O(|m|), como se puede ver abajo.
                     Carrera nuevaCarrera = new Carrera();                         //O(1)
-                    nuevaMateria._enCarreras[j] = nuevaCarrera;                   //O(1)
+                    nuevaMateria._carrerasAsociadas[j] = nuevaCarrera;                   //O(1)
                     this._carreras.agregar(nombreCarrera,nuevaCarrera);           //O(|m|): Cantidad de caracteres de la materia 
                     nuevaCarrera.crearMateria(nombreMateria,nuevaMateria);        //O(|m|)
                 }else{
@@ -118,9 +119,8 @@ public class SistemaSIU {
         Carrera carreraActual = (Carrera) this._carreras.obtener(carrera);       // O(|c|): Cantidad de caracteres de la carrera
         Materia materiaActual = carreraActual.obtenerMateria(materia);           // O(|m|): Cantidad de caracteres de la materia
         
-        
-        ParCarreraMateria[] info = materiaActual._nombres;                       // O(1)
-        Carrera[] carreras = materiaActual._enCarreras;                          // O(1)
+        ParCarreraMateria[] info = materiaActual.obtenerNombres();               // O(1)
+        Carrera[] carreras = materiaActual.obtenerCarrerasAsociadas();           // O(1)
 
         //carreras e info conservan el mismo orden y tienen la misma longitud 
         //(info[0] refiere a los datos de carreras[0])
