@@ -5,15 +5,15 @@ package aed;
 public class Materia {
     private int[] _docentes;
     private DictTrie<String> _alumnado;
-    private ParCarreraMateria[] _nombres;                //nombres de la materia en las distintas carreras presente
-    public Carrera[] _carrerasAsociadas;                       //lista de carreras en las que esta presente materia
+    private ParCarreraMateria[] _nombres;                       //nombres de la materia en las distintas carreras presente
+    public Carrera[] _carrerasAsociadas;                        //lista de carreras en las que esta presente materia
     
     public Materia(ParCarreraMateria[] nombres){
-        this._carrerasAsociadas = new Carrera[nombres.length]; //inicializa con la cantidad de carreras que esta presente
-        this._nombres = nombres;                        //guarda los nombres de infoMateria
-        this._docentes = new int[4];
-        this._alumnado = new DictTrie<String>();
-    }
+        this._carrerasAsociadas = new Carrera[nombres.length];  //inicializa con la cantidad de carreras que esta presente
+        this._nombres = nombres;                                //guarda los nombres de infoMateria
+        this._docentes = new int[4];                            //O(1)
+        this._alumnado = new DictTrie<String>();                //O(1)
+    }       
     public void inscribir (String libreta){             //O(1) porque libreta está acotado
         this._alumnado.agregar(libreta);
     }
