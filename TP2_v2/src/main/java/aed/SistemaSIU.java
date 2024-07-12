@@ -32,15 +32,17 @@ public class SistemaSIU {
             for (int j= 0;j < nombres.length; j += 1){                           //O(Nm): Conjunto de todos los nombres de una materia
                 String nombreCarrera = nombres[j].carrera;
                 String nombreMateria = nombres[j].nombreMateria;
-                Carrera actual = (Carrera) this._carreras.obtener(nombreCarrera); // O(|c|): Cantidad de caracteres de la carrera
+                Carrera actual = (Carrera) this._carreras.obtener(nombreCarrera); //O(|c|): Cantidad de caracteres de la carrera
                 if (actual == null){                                              //Este if tiene una complejidad de O(|m|), como se puede ver abajo.
                     Carrera nuevaCarrera = new Carrera();                         //O(1)
-                    nuevaMateria._carrerasAsociadas[j] = nuevaCarrera;                   //O(1)
                     this._carreras.agregar(nombreCarrera,nuevaCarrera);           //O(|m|): Cantidad de caracteres de la materia 
                     nuevaCarrera.crearMateria(nombreMateria,nuevaMateria);        //O(|m|)
+                    actual = nuevaCarrera;
                 }else{
                     actual.crearMateria(nombreMateria, nuevaMateria);             //O(|m|)
                 }                                   
+                
+                nuevaMateria._carrerasAsociadas[j] = actual;            //O(1)
             }
        }
        for(int i = 0; i < libretasUniversitarias.length; i += 1){   //O(E): La cantidad de estudiantes que hay 
@@ -139,6 +141,7 @@ public class SistemaSIU {
             alumnoActual.dejarMateria();                                         // O(1)
         }
     }
+
 
     public void cerrarMateria0(String materia, String carrera){
         Carrera carreraActual;
